@@ -1,13 +1,21 @@
 #ifndef LIFTOFF_BALL_H
 #define LIFTOFF_BALL_H
 
+#include "Platform.h"
+
+struct BallPosition {
+  int x;
+  int y;
+};
+
 class Ball {
 
 public:
   Ball(
     int gameFieldWidth,
     int gameFieldHeight,
-    int pxPerBlock
+    int ballSizePx,
+    Platform *platform
   );
 
   ~Ball();
@@ -16,20 +24,32 @@ public:
 
   bool getIsLaunched();
 
-  void updateStartPos(int xPos);
+  void updateStartPos();
+
+  void move();
+
+  BallPosition *getCurrentPosition();
 
 private:
+  Platform *platform;
+
   const int gameFieldWidth;
   const int gameFieldHeight;
 
-  int xStartPos;
-  int yStartPos;
+  BallPosition startPos;
+  BallPosition currentPos;
 
   bool isLaunched;
 
-  float angle;
+  int ballSizePx;
+  int halfBallSizePx;
+  double angle;
   int velocity;
   int r;
+
+  void wallBounce();
+
+  void platformBounce();
 };
 
 #endif //LIFTOFF_BALL_H

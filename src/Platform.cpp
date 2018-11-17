@@ -4,16 +4,17 @@
 Platform::Platform(
   int gameFieldWidth,
   int pxPerBlock,
-  int movementStep
+  int movementPerFrame,
+  int blocks
 ) :
   gameFieldWidth(gameFieldWidth),
-  movementStep(movementStep),
-  pxPerBlock(pxPerBlock) {
+  movementPerFrame(movementPerFrame) {
 
-  blocks = 5;
+  dims.blocks = blocks;
+  dims.pxPerBlock = pxPerBlock;
 
   dims.height = pxPerBlock;
-  dims.width = blocks * pxPerBlock;
+  dims.width = dims.blocks * pxPerBlock;
 
   int halfWidth = dims.width / 2;
   dims.center = gameFieldWidth / 2;
@@ -24,8 +25,7 @@ Platform::Platform(
   canMoveRight = true;
   canMoveLeft = true;
 
-  isMovingLeft = false;
-  isMovingRight = false;
+  movementStatus = Still;
 }
 
 PlatformDimensions *Platform::getDimensions() {
@@ -33,26 +33,23 @@ PlatformDimensions *Platform::getDimensions() {
 }
 
 void Platform::startMoveToLeft() {
-  isMovingLeft = true;
-  isMovingRight = false;
+  movementStatus = Left;
 }
 
 void Platform::startMoveToRight() {
-  isMovingLeft = false;
-  isMovingRight = true;
+  movementStatus = Right;
 }
 
 void Platform::stopMovement() {
-  isMovingLeft = false;
-  isMovingRight = false;
+  movementStatus = Still;
 }
 
 void Platform::move() {
-  if (isMovingLeft) {
+  if (movementStatus == Left) {
     moveLeft();
     return;
   }
-  if (isMovingRight) {
+  if (movementStatus == Right) {
     moveRight();
     return;
   }
@@ -63,7 +60,7 @@ void Platform::moveLeft() {
     return;
   }
   canMoveRight = true;
-  int nextLeftEdge = dims.xLeftEdge - movementStep;
+  int nextLeftEdge = dims.xLeftEdge - movementPerFrame;
   if (nextLeftEdge <= 0) {
     dims.xLeftEdge = 0;
     canMoveLeft = false;
@@ -79,7 +76,7 @@ void Platform::moveRight() {
     return;
   }
   canMoveLeft = true;
-  int nextRightEdge = dims.xRightEdge + movementStep;
+  int nextRightEdge = dims.xRightEdge + movementPerFrame;
   if (nextRightEdge >= gameFieldWidth) {
     dims.xRightEdge = gameFieldWidth;
     canMoveRight = false;
@@ -88,6 +85,10 @@ void Platform::moveRight() {
   }
   dims.xLeftEdge = dims.xRightEdge - dims.width;
   dims.center = dims.xLeftEdge + (dims.width / 2);
+}
+
+PlatformMovementStatus *Platform::getMovementStatus() {
+  return &movementStatus;
 }
 
 Platform::~Platform() = default;

@@ -14,12 +14,14 @@ struct GameParams {
   int winHeight;
   int platformPxPerBlock;
   int ballSizePx;
+  int platformBlocks;
+  int platformMovementPerFrame;
 };
 
 class Game {
 
 public:
-  Game(GameParams *params);
+  explicit Game(GameParams *params);
 
   ~Game();
 
@@ -44,6 +46,7 @@ private:
   bool isRunning;
 
   int platformPxPerBlock;
+  int platformBlocks;
   int ballSizePx;
 
   Platform *platform;
@@ -55,7 +58,6 @@ private:
   SDL_Renderer *renderer;
   SDL_Window *window;
   SDL_Event event;
-  SDL_DisplayMode displayMode;
 
   SDL_Rect platformRect;
   SDL_Rect ballTextureDestRect;

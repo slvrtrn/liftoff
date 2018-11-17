@@ -9,7 +9,7 @@ int main() {
   const Uint32 maxFrameTime = (Uint32) 1000 / fps;
 
   GameParams params = {
-    "LiftOff!", 0, 0, 800, 600, 20, 16
+    "LiftOff!", 0, 0, 800, 600, 20, 16, 5, 10
   };
   Game *game = new Game(&params);
 

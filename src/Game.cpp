@@ -10,7 +10,8 @@ Game::Game(GameParams *params) :
   platformPxPerBlock(params->platformPxPerBlock),
   ballSizePx(params->ballSizePx),
   winWidth(params->winWidth),
-  winHeight(params->winHeight) {
+  winHeight(params->winHeight),
+  platformBlocks(params->platformBlocks) {
 
   isRunning = false;
 
@@ -64,8 +65,8 @@ Game::Game(GameParams *params) :
 
   cout << "SDL initialized successfully!" << endl;
 
-  platform = new Platform(winWidth, platformPxPerBlock, 10);
-  ball = new Ball(winHeight, winWidth, platformPxPerBlock);
+  platform = new Platform(winWidth, platformPxPerBlock, params->platformMovementPerFrame, platformBlocks);
+  ball = new Ball(winWidth, winHeight, ballSizePx, platform);
 
   controls = new Controls(ball, platform);
 
@@ -126,6 +127,13 @@ void Game::render() {
     ballTextureDestRect.y = winHeight - (dims->height + ballSizePx);
     ballTextureDestRect.h = ballTextureDestRect.w = ballSizePx;
     SDL_RenderCopy(renderer, ballTexture, nullptr, &ballTextureDestRect);
+  } else {
+    // The ball is moving on the field
+    BallPosition *ballPosition = ball->getCurrentPosition();
+    ballTextureDestRect.x = ballPosition->x - (ballSizePx / 2);
+    ballTextureDestRect.y = winHeight - (ballPosition->y + ballSizePx);
+    ballTextureDestRect.h = ballTextureDestRect.w = ballSizePx;
+    SDL_RenderCopy(renderer, ballTexture, nullptr, &ballTextureDestRect);
   }
 
   // Show
@@ -139,7 +147,8 @@ void Game::process() {
   // Until the ball is launched, it is sticked to the middle of the platform
   // Update is required to launch the ball from the correct position
   if (!ball->getIsLaunched()) {
-    PlatformDimensions *dims = platform->getDimensions();
-    ball->updateStartPos(dims->width / 2);
+    ball->updateStartPos();
+  } else {
+    ball->move();
   }
 }

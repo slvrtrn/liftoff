@@ -1,6 +1,12 @@
 #ifndef LIFTOFF_PLATFORM_H
 #define LIFTOFF_PLATFORM_H
 
+enum PlatformMovementStatus {
+  Still = 0,
+  Left = 1,
+  Right = 2
+};
+
 struct PlatformDimensions {
   int width;
   int height;
@@ -15,6 +21,13 @@ struct PlatformDimensions {
   int center;
   int xLeftEdge;
   int xRightEdge;
+
+  /*
+   * Platform size in blocks
+   * So total width is just `pxPerBlock` * `blocks`
+   */
+  int blocks;
+  int pxPerBlock;
 };
 
 class Platform {
@@ -23,7 +36,8 @@ public:
   Platform(
     int gameFieldWidth,
     int pxPerBlock,
-    int movementStep
+    int movementPerFrame,
+    int blocks
   );
 
   ~Platform();
@@ -38,20 +52,18 @@ public:
 
   void stopMovement();
 
+  PlatformMovementStatus *getMovementStatus();
+
 private:
   const int gameFieldWidth;
-  const int movementStep; // Movement in PX per frame
-  const int pxPerBlock;
-
-  int blocks; // Platform size in blocks, like [ ][ ][ ][ ][ ]
+  const int movementPerFrame; // Movement in PX per frame
 
   PlatformDimensions dims;
 
   bool canMoveRight;
   bool canMoveLeft;
 
-  bool isMovingRight;
-  bool isMovingLeft;
+  PlatformMovementStatus movementStatus;
 
   void moveLeft();
 
