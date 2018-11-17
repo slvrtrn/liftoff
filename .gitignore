@@ -1,0 +1,9 @@
+/.idea/*
+/CMakeFiles/*
+/cmake-build-debug/*
+
+/Makefile
+/CMakeCache.txt
+/cmake_install.cmake
+/liftoff
+/liftoff.cbp
